@@ -37,35 +37,90 @@ window.addEventListener("resize", () => {
     renderItems(articles)
 });
 
-function hideToast(){
-    toast.classList.add('invisible')
+function chatGDPgenerator(type,message) {
+    const toastItem = cpe(toastCont,"div",'');
+    toastItem.setAttribute("id", "toast-success");
+    toastItem.setAttribute("class", "flex z-50 items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow");
+    toastItem.setAttribute("role", "alert");
+
+    const iconDiv = document.createElement("div");
+    iconDiv.setAttribute("class", "inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg");
+
+    const iconSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    iconSVG.setAttribute("aria-hidden", "true");
+    iconSVG.setAttribute("class", "w-5 h-5");
+    iconSVG.setAttribute("viewBox", "0 0 20 20");
+
+    const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    iconPath.setAttribute("fill-rule", "evenodd");
+    iconPath.setAttribute("clip-rule", "evenodd");
+
+    const iconSpan = document.createElement("span");
+    iconSpan.setAttribute("class", "sr-only");
+    iconSpan.textContent = "Check icon";
+
+    iconSVG.appendChild(iconPath);
+    iconDiv.appendChild(iconSVG);
+    iconDiv.appendChild(iconSpan);
+    toastItem.appendChild(iconDiv);
+
+    const toastMessage = document.createElement("div");
+    toastMessage.setAttribute("id", "toastMessage");
+    toastMessage.setAttribute("class", "ml-3 text-sm font-normal");
+    toastMessage.textContent = message;
+    toastItem.appendChild(toastMessage);
+
+    const closeButton = document.createElement("button");
+    closeButton.setAttribute("type", "button");
+    closeButton.setAttribute("class", "ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8");
+    closeButton.setAttribute("data-dismiss-target", "#toast-success");
+    closeButton.setAttribute("aria-label", "Close");
+
+
+    const closeSpan = document.createElement("span");
+    closeSpan.setAttribute("class", "sr-only");
+    closeSpan.textContent = "Close";
+
+    const closeSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    closeSVG.setAttribute("aria-hidden", "true");
+    closeSVG.setAttribute("class", "w-5 h-5");
+    closeSVG.setAttribute("fill", "currentColor");
+    closeSVG.setAttribute("viewBox", "0 0 20 20");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("d", "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z");
+    path.setAttribute("clip-rule", "evenodd");
+
+    closeSVG.appendChild(path);
+    closeButton.appendChild(closeSpan)
+    closeButton.appendChild(closeSVG)
+    toastItem.appendChild(closeButton)
+
+    if (type === "danger"){
+        iconDiv.classList.add('text-red-500','bg-red-100')
+        iconPath.setAttribute("d", "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z");
+    }
+    else if (type === "warning"){
+        iconDiv.classList.add('text-orange-500','bg-orange-100')
+        iconPath.setAttribute("d", "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z");
+    }else {
+        iconDiv.classList.add('text-green-500','bg-green-100')
+        iconPath.setAttribute("d", "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z");
+    }
+    closeButton.addEventListener("click", () => {
+        toastItem.classList.add('opacity-0','duration-500');
+        setTimeout(() => {
+            toastCont.removeChild(toastItem)
+        }, 500);
+    })
 }
 
 function messageService(type,message) {
-    let toast = cpe(toastCont,'div','')
-    toast.classList = 'flex z-50 items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow'
 
-    let iconCont = cpe(toast,'div','')
-    iconCont.classList = 'inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg'
-
-    let icon = cpe(iconCont,'svg','')
-    icon.classList = 'w-5 h-5'
-    icon.viewBox = '0 0 20 20'
-    if (type === "danger"){
-        iconCont.classList.add('text-red-500','bg-red-100')
-        icon.innerHTML = '<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>'
-    }
-    else if (type === "warning"){
-        iconCont.classList.add('text-orange-500','bg-orange-100')
-        icon.innerHTML = '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>'
-    }else {
-        iconCont.classList.add('text-green-500','bg-green-100')
-        icon.innerHTML = '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>'
-    }
-
-    let messageDiv = cpe(toast,'div',message)
-    messageDiv.classList = 'ml-3 text-sm font-normal'
-
+    //the above section generated by chatGDP chatBot
+    chatGDPgenerator(type,message)
+    
 }
 
 function openNav() {
@@ -251,9 +306,14 @@ function deleteComment(commentData) {
         method: 'DELETE',
     }
 
-    fetch(url,opt).then(() => getPostComments(commentData.key))
-    toastMessage.innerText = 'Removed'
-    toast.classList.remove('invisible')
+    fetch(url,opt)
+        .then(() => {
+            getPostComments(commentData.key)
+            messageService('danger','Comment deleted!')
+        })
+        .catch(() => {
+            messageService('alert','Server error!')
+        })
 }
 
 function editableCommentField(commentData, div) {
